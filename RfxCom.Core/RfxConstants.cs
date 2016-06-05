@@ -136,4 +136,22 @@ namespace RfxCom.Core
         EraseRTSremoteFromRFXtrx = 0xD,
         EraseAllRTSremotesFromRFXtrx = 0xE
     }
+
+    public enum Lighting2Command
+    {
+        Off = 0x0,
+        On = 0x1,
+        SetLevel = 0x2,
+        GroupOff = 0x3,
+        GroupOn = 0x4,
+        SetGroupLevel = 0x5,        
+    }
+    public enum Lighting2SubType
+    {
+        AC = 0x0,
+        HomeEasyEU = 0x1,
+        ANSLUT = 0x2,
+        KambrookRF3672 = 0x3,      
+    }
+
 }

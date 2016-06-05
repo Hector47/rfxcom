@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Packets\InterfaceMessage.cs" />
+    <Compile Include="Packets\Lighting2.cs" />
     <Compile Include="Packets\TemperatureHumiditySensor.cs" />
     <Compile Include="Packets\TemperatureSensor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

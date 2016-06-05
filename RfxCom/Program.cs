@@ -50,7 +50,7 @@ namespace RfxCom
                 PackageHost.WriteError("The setting 'PortName' is requiered to start the package !");
                 return;
             }
-
+            
             // Get the custom names
             this.stateObjectCustomNames = PackageHost.GetSettingAsJsonObject<Dictionary<string, string>>("StateObjectCustomNames");
             PackageHost.SettingsUpdated += (s, e) =>
@@ -116,6 +116,20 @@ namespace RfxCom
                     p.SubTypeName,
                 }, "RfxCom.TemperatureHumiditySensor", new Dictionary<string, object>() { ["Type"] = p.TypeName, ["RawData"] = BitConverter.ToString(p.RawData) }, PackageHost.GetSettingValue<int>("SensorStateObjectLifetime"));
             });
+            this.rfx.Subscribe<Lighting2>(p =>
+            {
+                // Push StateObject
+                PackageHost.PushStateObject(this.GetStateObjectName("Lighting2_" + p.Id + "-"+ p.UnitCode), new
+                {
+                    p.Id,
+                    p.UnitCode,
+                    p.Command,
+                    p.Level,
+                    p.SequenceNumber,                    
+                    p.SignalLevel,
+                    p.SubTypeName
+                }, "RfxCom.Lighting2", new Dictionary<string, object>() { ["Type"] = p.TypeName, ["RawData"] = BitConverter.ToString(p.RawData) }, PackageHost.GetSettingValue<int>("SensorStateObjectLifetime"));
+            });
 
             // Starting !
             var protocolsEnabled = PackageHost.ContainsSetting("ProtocolsEnabled") ? PackageHost.GetSettingValue("ProtocolsEnabled").Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(p => p.Trim()).ToArray() : null;
@@ -164,10 +178,29 @@ namespace RfxCom
         /// <param name="id2">The id2.</param>
         /// <param name="id3">The id3.</param>
         /// <param name="unitcode">The unitcode.</param>
-        [MessageCallback]
+        [MessageCallback]        
         public async void SendRFYCommand(RFYCommand command, int id1, int id2, int id3, int unitcode)
         {
             await this.rfx.SendMessage(new byte[] { 0x0c, 0x1A, 0x0, 0x02, (byte)id1, (byte)id2, (byte)id3, (byte)unitcode, (byte)command, 0x0, 0x0, 0x0, 0x0 });
+        }
+
+        /// <summary>
+        /// Sends Lighting2 command
+        /// </summary>
+        /// <param name="command">The Lighting2 command (On, Off, SetLevel,...)</param>
+        /// <param name="id">The id</param>
+        /// <param name="unitcode">The Unit Code</param>
+        /// <param name="level">The level for SetLevel and Set Group Level (0 to 15)</param>
+        /// <param name="subtype">The Lighting2 SubType (AC, HomeEasyEU,...)</param>
+        [MessageCallback]
+        public async void SendLighting2Command(Lighting2Command command, string id, int unitcode,int level, Lighting2SubType subtype)
+        {
+            var IdParsed = Enumerable.Range(0, id.Length)
+                                 .Where(x => x % 2 == 0)
+                                 .Select(x => Convert.ToByte(id.Substring(x, 2), 16))
+                                 .ToArray();
+
+            await this.rfx.SendMessage(new byte[] { 0x0b, 0x11,(byte)subtype, 0x00, IdParsed[0], IdParsed[1], IdParsed[2], IdParsed[3],  (byte)unitcode, (byte)command, (byte)level, 0x0 });
         }
 
         /// <summary>

@@ -2,8 +2,8 @@
 <Package xmlns="http://schemas.myconstellation.io/Constellation/1.8/PackageManifest"
          Name="Rfxcom"
          Icon="icon.png"
-         Version="1.0.2"
-         Author="Sebastien Warin"
+         Version="1.0.3"
+         Author="Sebastien Warin, Hector Cachoulet"
          URL="http://sebastien.warin.fr"
          PackageUrl="https://github.com/myconstellation/rfxcom"
          Description="RfxCom Connector for Constellation">
