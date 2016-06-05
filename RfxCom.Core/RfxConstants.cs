@@ -146,6 +146,7 @@ namespace RfxCom.Core
         GroupOn = 0x4,
         SetGroupLevel = 0x5,        
     }
+
     public enum Lighting2SubType
     {
         AC = 0x0,
